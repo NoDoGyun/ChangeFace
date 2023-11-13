@@ -62,11 +62,13 @@ def filter_max(image, ksize):
 def change_canny(image, face, threshold1=50, threshold2=150):
     #얼굴 부분 분리
     y1, y2, x1, x2 = face
-    dst = image[y1:y2, x1:x2].cvtColor(cv2.COLOR_BGR2GRAY)
+    dst = image[y1:y2, x1:x2]
+    dst = cv2.cvtColor(dst, cv2.COLOR_BGR2GRAY)
 
     #캐니 에지
     dst = cv2.Canny(dst, threshold1, threshold2)
-    image[y1:y2, x1:x2] = dst
+    dst2 = cv2.merge((dst, dst, dst))
+    image[y1:y2, x1:x2] = dst2
 
 def change_blur(image, face, level=1):
     #블러에 사용할 마스크
@@ -90,7 +92,9 @@ def change_blur(image, face, level=1):
     else:
         dst = filter(dst, data2)
 
-    image[y1:y2, x1:x2] = dst
+    dst2 = cv2.merge((dst, dst, dst))
+
+    image[y1:y2, x1:x2] = dst2
 
 def change_max(image, face, ksize=10):
     #얼굴 부분 분리
