@@ -59,7 +59,6 @@ def filter_max(image, ksize):
 
     return dst
 
-
 def change_canny(image, face, threshold1=50, threshold2=150):
     #얼굴 부분 분리
     y1, y2, x1, x2 = face
@@ -68,8 +67,6 @@ def change_canny(image, face, threshold1=50, threshold2=150):
     #캐니 에지
     dst = cv2.Canny(dst, threshold1, threshold2)
     image[y1:y2, x1:x2] = dst
-
-    return image
 
 def change_blur(image, face, level=1):
     #블러에 사용할 마스크
@@ -95,17 +92,36 @@ def change_blur(image, face, level=1):
 
     image[y1:y2, x1:x2] = dst
 
-    return image
-
 def change_max(image, face, ksize=10):
     #얼굴 부분 분리
     y1, y2, x1, x2 = face
     dst = image[y1:y2, x1:x2]
 
-trash = np.array([[[2, 2], [2, 2], [2, 2]],
-                  [[2, 2], [2, 2], [2, 2]],
-                  [[2, 2], [2, 2], [2, 2]]])
+    dst = filter(dst, ksize)
+    image[y1:y2, x1:x2] = dst
 
-t2 = trash[0:2, 0:2]
-print(t2)
-print(t2.shape)
+def change_mosaic(image, face, ksize=10):
+    #얼굴 부분 분리
+    y1, y2, x1, x2 = face
+    dst = image[y1:y2, x1:x2]
+
+    #이미지 크기 확인
+    row, col = image.shape[:2]
+
+    #변수 하나
+    isSame = False
+
+    for i in range(row):
+        if i % ksize == 0:
+            isSame = False
+        else:
+            isSame = True
+        for j in range(col):
+            #isSame이면 윗줄이랑 똑같이
+            if isSame:
+                dst[i, j] = dst[i - 1, j]
+            else:
+                if j % ksize != 0:
+                    dst[i, j] = dst[i, j - 1]
+
+    image[y1:y2, x1:x2] = dst
