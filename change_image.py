@@ -60,15 +60,20 @@ def filter_max(image, ksize):
     return dst
 
 def change_canny(image, face, threshold1=50, threshold2=150):
-    #얼굴 부분 분리
-    y1, y2, x1, x2 = face
-    dst = image[y1:y2, x1:x2]
+    if face:
+        # 얼굴 부분 분리
+        x1, y1, x2, y2 = face
+        dst = image[y1:y1 + y2, x1:x1 + x2]
+    else:
+        x1, y1 = 0, 0
+        y2, x2 = image.shape[:2]
+        dst = image.copy()
     dst = cv2.cvtColor(dst, cv2.COLOR_BGR2GRAY)
 
     #캐니 에지
     dst = cv2.Canny(dst, threshold1, threshold2)
     dst2 = cv2.merge((dst, dst, dst))
-    image[y1:y2, x1:x2] = dst2
+    image[y1:y1 + y2, x1:x1 + x2] = dst
 
 def change_blur(image, face, level=1):
     #블러에 사용할 마스크
@@ -82,9 +87,14 @@ def change_blur(image, face, level=1):
              1/25, 1/25, 1/25, 1/25, 1/25,
              1/25, 1/25, 1/25, 1/25, 1/25]
 
-    #얼굴 부분 분리
-    y1, y2, x1, x2 = face
-    dst = image[y1:y2, x1:x2]
+    if face:
+        # 얼굴 부분 분리
+        x1, y1, x2, y2 = face
+        dst = image[y1:y1 + y2, x1:x1 + x2]
+    else:
+        x1, y1 = 0, 0
+        y2, x2 = image.shape[:2]
+        dst = image.copy()
 
     #마스크 고르기
     if level == 1:
@@ -94,23 +104,33 @@ def change_blur(image, face, level=1):
 
     dst2 = cv2.merge((dst, dst, dst))
 
-    image[y1:y2, x1:x2] = dst2
+    image[y1:y1 + y2, x1:x1 + x2] = dst
 
 def change_max(image, face, ksize=10):
-    #얼굴 부분 분리
-    y1, y2, x1, x2 = face
-    dst = image[y1:y2, x1:x2]
+    if face:
+        # 얼굴 부분 분리
+        x1, y1, x2, y2 = face
+        dst = image[y1:y1 + y2, x1:x1 + x2]
+    else:
+        x1, y1 = 0, 0
+        y2, x2 = image.shape[:2]
+        dst = image.copy()
 
     dst = filter(dst, ksize)
-    image[y1:y2, x1:x2] = dst
+    image[y1:y1 + y2, x1:x1 + x2] = dst
 
-def change_mosaic(image, face, ksize=10):
-    #얼굴 부분 분리
-    y1, y2, x1, x2 = face
-    dst = image[y1:y2, x1:x2]
+def change_mosaic(image, face=None, ksize=10):
+    if face:
+        #얼굴 부분 분리
+        x1, y1, x2, y2 = face
+        dst = image[y1:y1 + y2, x1:x1 + x2]
+    else:
+        x1, y1 = 0, 0
+        y2, x2 = image.shape[:2]
+        dst = image.copy()
 
     #이미지 크기 확인
-    row, col = image.shape[:2]
+    row, col = dst.shape[:2]
 
     #변수 하나
     isSame = False
@@ -128,4 +148,4 @@ def change_mosaic(image, face, ksize=10):
                 if j % ksize != 0:
                     dst[i, j] = dst[i, j - 1]
 
-    image[y1:y2, x1:x2] = dst
+    image[y1:y1+y2, x1:x1+x2] = dst
