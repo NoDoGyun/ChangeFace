@@ -10,9 +10,18 @@ if __name__ == '__main__':
     #만약 인식 실패했을 시, 전에 파악했던 얼굴 영역으로 대체
     px, py, pw, ph = 0, 0, 0, 0
     is_first = False
+    change_fn = [change_image.change_mosaic, change_image.change_canny, change_image.change_max]
+    fn_num = 0
 
     while True:
-        if cv2.waitKey(33) >= 0:
+        key = cv2.waitKey(33)
+        if key == ord('q') or key == ord('Q'):
+            fn_num = 0
+        elif key == ord('w') or key == ord('W'):
+            fn_num = 1
+        elif key == ord('e') or key == ord('E'):
+            fn_num = 2
+        elif key >= 0:
             break
 
         ret, frame = capture.read()
@@ -20,11 +29,11 @@ if __name__ == '__main__':
         faces = cascade.detectMultiScale(gray)
         #인식 실패시
         if isinstance(faces, tuple):
-                change_image.change_mosaic(frame, ksize=20)
+                change_fn[fn_num](frame)
         #성공시
         else:
             for (x, y, w, h) in faces:
-                change_image.change_mosaic(frame, (x, y, w, h), 20)
+                change_fn[fn_num](frame, (x, y, w, h), 20)
                 is_first = True
                 px = x
                 py = y

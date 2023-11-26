@@ -59,7 +59,7 @@ def filter_max(image, ksize):
 
     return dst
 
-def change_canny(image, face, threshold1=50, threshold2=150):
+def change_canny(image, face=None, threshold1=50, threshold2=150):
     if face:
         # 얼굴 부분 분리
         x1, y1, x2, y2 = face
@@ -73,7 +73,7 @@ def change_canny(image, face, threshold1=50, threshold2=150):
     #캐니 에지
     dst = cv2.Canny(dst, threshold1, threshold2)
     dst2 = cv2.merge((dst, dst, dst))
-    image[y1:y1 + y2, x1:x1 + x2] = dst
+    image[y1:y1 + y2, x1:x1 + x2] = dst2
 
 def change_blur(image, face, level=1):
     #블러에 사용할 마스크
@@ -106,7 +106,7 @@ def change_blur(image, face, level=1):
 
     image[y1:y1 + y2, x1:x1 + x2] = dst
 
-def change_max(image, face, ksize=10):
+def change_max(image, face=None, ksize=20):
     if face:
         # 얼굴 부분 분리
         x1, y1, x2, y2 = face
@@ -116,7 +116,7 @@ def change_max(image, face, ksize=10):
         y2, x2 = image.shape[:2]
         dst = image.copy()
 
-    dst = filter(dst, ksize)
+    dst = filter_max(dst, ksize)
     image[y1:y1 + y2, x1:x1 + x2] = dst
 
 def change_mosaic(image, face=None, ksize=10):
