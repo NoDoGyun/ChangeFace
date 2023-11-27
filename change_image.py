@@ -119,7 +119,7 @@ def change_max(image, face=None, ksize=20):
     dst = filter_max(dst, ksize)
     image[y1:y1 + y2, x1:x1 + x2] = dst
 
-def change_mosaic(image, face=None, ksize=10):
+def change_mosaic(image, face=None, ksize=20):
     if face:
         #얼굴 부분 분리
         x1, y1, x2, y2 = face
