@@ -19,7 +19,7 @@ if __name__ == '__main__':
     
     #얼굴 영역 샘플
     while cv2.waitKey(33) < 0:
-        if count > 4000:
+        if count > 2000:
             break
         count += 33
         _, frame = capture.read()
@@ -28,6 +28,8 @@ if __name__ == '__main__':
             for (x, y, w, h) in faces:
                 face_input.append([x, y, w, h])
                 cv2.rectangle(frame, (x, y, w, h), (0, 0, 255), 2)
+        text = "Getting Data: " + str((int)(count / 2000 * 100)) + "%"
+        cv2.putText(frame, text, (50, 50), fontScale=1, color=(0, 0, 0), fontFace=cv2.FONT_HERSHEY_SIMPLEX, thickness=3)
         cv2.imshow('face', frame)
     cv2.destroyAllWindows()
 
